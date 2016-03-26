@@ -8,6 +8,11 @@
 
 /* Begin PBXBuildFile section */
 		ED48F67F1C93F9100069B77F /* H264HwEncoderImpl.m in Sources */ = {isa = PBXBuildFile; fileRef = ED48F67E1C93F9100069B77F /* H264HwEncoderImpl.m */; };
+		ED5B10B21CA693A400BEEA27 /* Default-568h@2x.png in Resources */ = {isa = PBXBuildFile; fileRef = ED5B10B11CA693A400BEEA27 /* Default-568h@2x.png */; };
+		ED5B10B51CA694EF00BEEA27 /* librtmp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED5B10B31CA6940600BEEA27 /* librtmp.a */; };
+		ED5B10B71CA6985B00BEEA27 /* libssl.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED5B10B61CA6985B00BEEA27 /* libssl.a */; };
+		ED5B10BB1CA6995600BEEA27 /* libcrypto.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ED5B10BA1CA6995600BEEA27 /* libcrypto.a */; };
+		ED5B10BD1CA69DCF00BEEA27 /* libz.1.1.3.tbd in Frameworks */ = {isa = PBXBuildFile; fileRef = ED5B10BC1CA69DCF00BEEA27 /* libz.1.1.3.tbd */; };
 		EDB4DBBC1CA4CB7400ECC2CF /* RTMPSession.mm in Sources */ = {isa = PBXBuildFile; fileRef = EDB4DBBB1CA4CB7400ECC2CF /* RTMPSession.mm */; };
 		EDB4DBBF1CA4CC0B00ECC2CF /* CameraSource.m in Sources */ = {isa = PBXBuildFile; fileRef = EDB4DBBE1CA4CC0B00ECC2CF /* CameraSource.m */; };
 		EDF129551C93E4180014CB61 /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = EDF129541C93E4180014CB61 /* main.m */; };
@@ -40,6 +45,13 @@
 /* Begin PBXFileReference section */
 		ED48F67D1C93F9100069B77F /* H264HwEncoderImpl.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = H264HwEncoderImpl.h; sourceTree = "<group>"; };
 		ED48F67E1C93F9100069B77F /* H264HwEncoderImpl.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = H264HwEncoderImpl.m; sourceTree = "<group>"; };
+		ED5B10AF1CA6939900BEEA27 /* amf.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = amf.h; sourceTree = "<group>"; };
+		ED5B10B01CA6939900BEEA27 /* rtmp.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = rtmp.h; sourceTree = "<group>"; };
+		ED5B10B11CA693A400BEEA27 /* Default-568h@2x.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; name = "Default-568h@2x.png"; path = "../Default-568h@2x.png"; sourceTree = "<group>"; };
+		ED5B10B31CA6940600BEEA27 /* librtmp.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = librtmp.a; sourceTree = "<group>"; };
+		ED5B10B61CA6985B00BEEA27 /* libssl.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libssl.a; sourceTree = "<group>"; };
+		ED5B10BA1CA6995600BEEA27 /* libcrypto.a */ = {isa = PBXFileReference; lastKnownFileType = archive.ar; path = libcrypto.a; sourceTree = "<group>"; };
+		ED5B10BC1CA69DCF00BEEA27 /* libz.1.1.3.tbd */ = {isa = PBXFileReference; lastKnownFileType = "sourcecode.text-based-dylib-definition"; name = libz.1.1.3.tbd; path = usr/lib/libz.1.1.3.tbd; sourceTree = SDKROOT; };
 		EDB4DBBB1CA4CB7400ECC2CF /* RTMPSession.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = RTMPSession.mm; sourceTree = "<group>"; };
 		EDB4DBBD1CA4CBB200ECC2CF /* RTMPSession.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = RTMPSession.h; sourceTree = "<group>"; };
 		EDB4DBBE1CA4CC0B00ECC2CF /* CameraSource.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = CameraSource.m; sourceTree = "<group>"; };
@@ -67,6 +79,10 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				ED5B10BD1CA69DCF00BEEA27 /* libz.1.1.3.tbd in Frameworks */,
+				ED5B10B71CA6985B00BEEA27 /* libssl.a in Frameworks */,
+				ED5B10B51CA694EF00BEEA27 /* librtmp.a in Frameworks */,
+				ED5B10BB1CA6995600BEEA27 /* libcrypto.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -98,6 +114,8 @@
 		ED5B0FAB1CA629B800BEEA27 /* librtmp */ = {
 			isa = PBXGroup;
 			children = (
+				ED5B10AF1CA6939900BEEA27 /* amf.h */,
+				ED5B10B01CA6939900BEEA27 /* rtmp.h */,
 			);
 			path = librtmp;
 			sourceTree = "<group>";
@@ -105,6 +123,10 @@
 		EDB4DBC11CA5243300ECC2CF /* Framework */ = {
 			isa = PBXGroup;
 			children = (
+				ED5B10BC1CA69DCF00BEEA27 /* libz.1.1.3.tbd */,
+				ED5B10BA1CA6995600BEEA27 /* libcrypto.a */,
+				ED5B10B61CA6985B00BEEA27 /* libssl.a */,
+				ED5B10B31CA6940600BEEA27 /* librtmp.a */,
 			);
 			name = Framework;
 			sourceTree = "<group>";
@@ -145,6 +167,7 @@
 				EDF1295A1C93E4180014CB61 /* ViewController.m */,
 				EDF1295C1C93E4180014CB61 /* Main.storyboard */,
 				EDF1295F1C93E4180014CB61 /* Assets.xcassets */,
+				ED5B10B11CA693A400BEEA27 /* Default-568h@2x.png */,
 				EDF129611C93E4180014CB61 /* LaunchScreen.storyboard */,
 				EDF129641C93E4180014CB61 /* Info.plist */,
 				ED5B0FAA1CA629B800BEEA27 /* 3rdinclude */,
@@ -283,6 +306,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				EDF129631C93E4180014CB61 /* LaunchScreen.storyboard in Resources */,
+				ED5B10B21CA693A400BEEA27 /* Default-568h@2x.png in Resources */,
 				EDF129601C93E4180014CB61 /* Assets.xcassets in Resources */,
 				EDF1295E1C93E4180014CB61 /* Main.storyboard in Resources */,
 			);

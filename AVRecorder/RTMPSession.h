@@ -9,7 +9,7 @@
 #ifndef RTMPSession_h
 #define RTMPSession_h
 
-//#import "rtmp.h"
+#import "rtmp.h"
 #import <Foundation/Foundation.h>
 
 @interface RTMPSession : NSObject
