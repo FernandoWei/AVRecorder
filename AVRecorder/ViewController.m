@@ -10,7 +10,6 @@
 
 @interface ViewController ()
 {
-    CameraSource* camera;
 }
 
 @end
@@ -19,18 +18,22 @@
 
 - (void)startVideoRecording
 {
-    camera = [CameraSource shareInstance];
-    [camera startCamera:_displayView];
+    [self setupRTMPSession];
+    [[CameraSource shareInstance] startCamera:_displayView];
+}
+
+- (void)setupRTMPSession
+{
+    if (NO == [[RTMPSession shareInstance] setupRTMPStream:@"rtmp://localhost/myapp/mystream"])
+    {
+        return;
+    }
 }
 
 - (void)endVideoRecording
 {
-    if (!camera)
-    {
-        camera = [CameraSource shareInstance];
-    }
-    
-    [camera stopCamera];
+    [[CameraSource shareInstance] stopCamera];
+    [[RTMPSession shareInstance] freeRTMPStream];
 }
 
 - (IBAction)stopButton:(id)sender

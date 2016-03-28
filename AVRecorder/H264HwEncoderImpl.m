@@ -7,6 +7,7 @@
 //
 
 #import "H264HwEncoderImpl.h"
+#import "RTMPSession.h"
 #define YUV_FRAME_SIZE 2000
 #define FRAME_WIDTH
 #define NUMBEROFRAMES 300
@@ -60,7 +61,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
 {
     //CMBlockBufferRef block = CMSampleBufferGetDataBuffer(sampleBuffer);
     //CFArrayRef attachments = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, false);
-//    CMTime pts = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
+    CMTime pts = CMSampleBufferGetPresentationTimeStamp(sampleBuffer);
 //    CMTime dts = CMSampleBufferGetDecodeTimeStamp(sampleBuffer);
     
     
@@ -95,8 +96,8 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
                 encoder->sps = [NSMutableData dataWithBytes:sparameterSet length:sparameterSetSize];
                 encoder->pps = [NSMutableData dataWithBytes:pparameterSet length:pparameterSetSize];
 //                
-                [encoder dataPacketizer:encoder->sps keyFrame: true];
-                [encoder dataPacketizer:encoder->pps keyFrame: true];
+                [encoder dataPacketizer:encoder->sps keyFrame: true timestamp: pts];
+                [encoder dataPacketizer:encoder->pps keyFrame: true timestamp: pts];
             }
         }
     }
@@ -108,11 +109,11 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     CMBlockBufferGetDataPointer(dataBuffer, 0, 0, &length, &dataPointer);
     
     NSMutableData* data = [[NSMutableData alloc] initWithBytes:dataPointer length:length];
-    [encoder dataPacketizer:data keyFrame: false];
+    [encoder dataPacketizer:data keyFrame: false timestamp: pts];
 }
 
 //要使用大端模式存储数据
-- (void) dataPacketizer:(NSMutableData*)data keyFrame:(bool)key
+- (void) dataPacketizer:(NSMutableData*)data keyFrame:(bool)key timestamp:(CMTime) pts
 {
     NSMutableData* tagData = [NSMutableData dataWithLength:5];  //前五个字节为固定长度
     uint8_t frameType_codecId = 0x27;
@@ -147,10 +148,11 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
             [tagData appendBytes:[self->pps mutableBytes] length:self->pps.length];
             
             //发送出去
-            // to do with rtmp
+            [[RTMPSession shareInstance] send:tagData dataType:RTMP_PACKET_TYPE_VIDEO timestamp:pts.value];
             
             //AVC sequence header只需要发送一次
             sentConfig = true;
+            return;
         }
         else
         {
@@ -161,7 +163,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     [tagData appendData:data];
     
     //发送出去
-    // to do with rtmp
+    [[RTMPSession shareInstance] send:tagData dataType:RTMP_PACKET_TYPE_VIDEO timestamp:pts.value];
 }
 
 - (void) initEncode:(int)width  height:(int)height
@@ -192,38 +194,38 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
 }
 - (void) encode:(CMSampleBufferRef )sampleBuffer
 {
-     dispatch_sync(aQueue, ^{
+    dispatch_sync(aQueue, ^{
         
-          frameCount++;
-            // Get the CV Image buffer
-            CVImageBufferRef imageBuffer = (CVImageBufferRef)CMSampleBufferGetImageBuffer(sampleBuffer);
+        frameCount++;
+        // Get the CV Image buffer
+        CVImageBufferRef imageBuffer = (CVImageBufferRef)CMSampleBufferGetImageBuffer(sampleBuffer);
+        
+        // Create properties
+        CMTime presentationTimeStamp = CMTimeMake(frameCount, 1000);  //单位是毫秒，1000在这里表示是一秒的多少分之一
+        CMTime duration = CMTimeMake(1, 20);
+        //CMTime duration = CMTimeMake(1, DURATION);
+        VTEncodeInfoFlags flags;
+        
+        // Pass it to the encoder
+        OSStatus statusCode = VTCompressionSessionEncodeFrame(EncodingSession,
+                                                              imageBuffer,
+                                                              presentationTimeStamp,
+                                                              duration,
+                                                              NULL, NULL, &flags);
+        // Check for error
+        if (statusCode != noErr) {
+            NSLog(@"H264: VTCompressionSessionEncodeFrame failed with %d", (int)statusCode);
+            error = @"H264: VTCompressionSessionEncodeFrame failed ";
             
-            // Create properties
-            CMTime presentationTimeStamp = CMTimeMake(frameCount, 1000);  //单位是毫秒，1000在这里表示是一秒的多少分之一
-         CMTime duration = CMTimeMake(1, 20);
-            //CMTime duration = CMTimeMake(1, DURATION);
-            VTEncodeInfoFlags flags;
-            
-            // Pass it to the encoder
-            OSStatus statusCode = VTCompressionSessionEncodeFrame(EncodingSession,
-                                                         imageBuffer,
-                                                         presentationTimeStamp,
-                                                         duration,
-                                                         NULL, NULL, &flags);
-            // Check for error
-            if (statusCode != noErr) {
-                NSLog(@"H264: VTCompressionSessionEncodeFrame failed with %d", (int)statusCode);
-                error = @"H264: VTCompressionSessionEncodeFrame failed ";
-                
-                // End the session
-                VTCompressionSessionInvalidate(EncodingSession);
-                CFRelease(EncodingSession);
-                EncodingSession = NULL;
-                error = NULL;
-                return;
-            }
-            NSLog(@"H264: VTCompressionSessionEncodeFrame Success");
-       });
+            // End the session
+            VTCompressionSessionInvalidate(EncodingSession);
+            CFRelease(EncodingSession);
+            EncodingSession = NULL;
+            error = NULL;
+            return;
+        }
+        NSLog(@"H264: VTCompressionSessionEncodeFrame Success");
+    });
     
     
 }

@@ -64,7 +64,7 @@
     return YES;
 }
 
-- (void) send:(NSMutableData*) data dataType:(int)type timestamp:(int)timestamp
+- (void) send:(NSMutableData*) data dataType:(int)type timestamp:(uint32_t)timestamp
 {
     RTMPPacket rtmpPkt;
     RTMPPacket_Reset(&rtmpPkt);

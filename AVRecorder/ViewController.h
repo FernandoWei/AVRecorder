@@ -7,6 +7,7 @@
 //
 
 #import "CameraSource.h"
+#import "RTMPSession.h"
 #import <UIKit/UIKit.h>
 
 @interface ViewController : UIViewController 

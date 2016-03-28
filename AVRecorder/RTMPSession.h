@@ -16,7 +16,7 @@
 
 + (instancetype) shareInstance;
 - (BOOL) setupRTMPStream:(NSString*) url;
-- (void) send:(NSMutableData*) data dataType:(int)type timestamp:(int)timestamp;
+- (void) send:(NSMutableData*) data dataType:(int)type timestamp:(uint32_t)timestamp;
 - (void) freeRTMPStream;
 
 @end
