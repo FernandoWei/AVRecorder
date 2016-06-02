@@ -88,7 +88,7 @@
 
 -(void) captureOutput:(AVCaptureOutput*)captureOutput didOutputSampleBuffer:(CMSampleBufferRef)sampleBuffer fromConnection:(AVCaptureConnection*)connection
 {
-    NSLog(@"frame captured at ");
+//    NSLog(@"frame captured at ");
     if (h264Encoder)
     {
         [h264Encoder encode:sampleBuffer];

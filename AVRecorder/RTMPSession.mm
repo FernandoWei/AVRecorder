@@ -3,7 +3,7 @@
 //  AVRecorder
 //
 //  Created by fernando on 16/3/25.
-//  Copyright © 2016年 XCKanKan. All rights reserved.
+//  Copyright © 2016年 fernando All rights reserved.
 //
 
 #import "RTMPSession.h"
@@ -38,24 +38,28 @@
 
 - (BOOL) setupRTMPStream:(NSString*) url
 {
-    //unique_ptr支持动态数组，而shared_ptr不能直接支持动态数组
     std::unique_ptr<char[]> url_c(new char[[url length] + 1]);
-    //std::shared_ptr<char[]> url_c_shared(new char[4]);
     [url getCString:url_c.get() maxLength:[url length] + 1 encoding:NSUTF8StringEncoding];
     
-    if (RTMP_SetupURL(_rtmp, url_c.get()) < 0)
+    if (!RTMP_SetupURL(_rtmp, url_c.get()))
     {
         NSLog(@"failed to setup url!");
         return NO;
+        
+        
+        
+        
     }
     
-    if (RTMP_Connect(_rtmp, NULL) < 0)
+    RTMP_EnableWrite(_rtmp);
+
+    if (!RTMP_Connect(_rtmp, NULL))
     {
         NSLog(@"failed to connect to the url!");
         return NO;
     }
     
-    if (RTMP_ConnectStream(_rtmp, 0) < 0)
+    if (!RTMP_ConnectStream(_rtmp, 0))
     {
         NSLog(@"failed to connect to the stream");
         return NO;

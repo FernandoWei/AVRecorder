@@ -65,7 +65,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
 //    CMTime dts = CMSampleBufferGetDecodeTimeStamp(sampleBuffer);
     
     
-    NSLog(@"didCompressH264 called with status %d infoFlags %d", (int)status, (int)infoFlags);
+//    NSLog(@"didCompressH264 called with status %d infoFlags %d", (int)status, (int)infoFlags);
     if (status != 0) return;
     
     if (!CMSampleBufferDataIsReady(sampleBuffer))
@@ -96,8 +96,8 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
                 encoder->sps = [NSMutableData dataWithBytes:sparameterSet length:sparameterSetSize];
                 encoder->pps = [NSMutableData dataWithBytes:pparameterSet length:pparameterSetSize];
 //                
-                [encoder dataPacketizer:encoder->sps keyFrame: true timestamp: pts];
-                [encoder dataPacketizer:encoder->pps keyFrame: true timestamp: pts];
+                [encoder dataPacketizer:nil keyFrame: true timestamp: pts];
+//                [encoder dataPacketizer:encoder->pps keyFrame: true timestamp: pts];
             }
         }
     }
@@ -118,14 +118,16 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     NSMutableData* tagData = [NSMutableData dataWithLength:5];  //前五个字节为固定长度
     uint8_t frameType_codecId = 0x27;
     [tagData replaceBytesInRange:NSMakeRange(0, 1) withBytes:&frameType_codecId length:1];
-    uint8_t avcc = 0x01;
-    [tagData replaceBytesInRange:NSMakeRange(1, 1) withBytes:&avcc length:1];
+    uint8_t avccSequenceHeader = 0x01;
+    [tagData replaceBytesInRange:NSMakeRange(1, 1) withBytes:&avccSequenceHeader length:1];
     if (key && !sentConfig)
     {
         if (self->sps.length > 0 && self->pps.length > 0)
         {
             frameType_codecId = 0x17;
             [tagData replaceBytesInRange:NSMakeRange(0, 1) withBytes:&frameType_codecId length:1];
+            avccSequenceHeader = 0x00;
+            [tagData replaceBytesInRange:NSMakeRange(1, 1) withBytes:&avccSequenceHeader length:1];
             
             //组装AVC sequence header
             uint8_t version = 0x01;
@@ -161,7 +163,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
     }
     
     [tagData appendData:data];
-    
+
     //发送出去
     [[RTMPSession shareInstance] send:tagData dataType:RTMP_PACKET_TYPE_VIDEO timestamp:pts.value];
 }
@@ -224,7 +226,7 @@ void didCompressH264(void *outputCallbackRefCon, void *sourceFrameRefCon, OSStat
             error = NULL;
             return;
         }
-        NSLog(@"H264: VTCompressionSessionEncodeFrame Success");
+//        NSLog(@"H264: VTCompressionSessionEncodeFrame Success");
     });
     
     
