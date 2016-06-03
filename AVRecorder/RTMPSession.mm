@@ -9,6 +9,8 @@
 #import "RTMPSession.h"
 #include <memory>
 #import <Foundation/Foundation.h>
+#include <thread>
+#include <chrono>
 
 
 @interface RTMPSession()
@@ -86,6 +88,7 @@
         NSLog(@"failed to send data");
     }
     RTMPPacket_Free(&rtmpPkt);
+    std::this_thread::sleep_for(std::chrono::milliseconds(40));
 }
 
 - (void) freeRTMPStream
