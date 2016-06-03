@@ -30,6 +30,7 @@
             rtmpSession = [[RTMPSession alloc] init];
             rtmpSession->_rtmp = RTMP_Alloc();
             RTMP_Init(rtmpSession->_rtmp);
+            rtmpSession->_rtmp->Link.timeout = 5;
         });
     }
     
@@ -38,17 +39,12 @@
 
 - (BOOL) setupRTMPStream:(NSString*) url
 {
-    std::unique_ptr<char[]> url_c(new char[[url length] + 1]);
-    [url getCString:url_c.get() maxLength:[url length] + 1 encoding:NSUTF8StringEncoding];
-    
-    if (!RTMP_SetupURL(_rtmp, url_c.get()))
+    if (!RTMP_SetupURL(_rtmp, (char*)[url UTF8String]))
+//    char *strUrl = (char *)[url cStringUsingEncoding:NSASCIIStringEncoding];
+//    if (!RTMP_SetupURL(_rtmp, strUrl))
     {
         NSLog(@"failed to setup url!");
         return NO;
-        
-        
-        
-        
     }
     
     RTMP_EnableWrite(_rtmp);
@@ -82,7 +78,13 @@
     rtmpPkt.m_nInfoField2 = self->_rtmp->m_stream_id;
     memcpy(rtmpPkt.m_body, [data mutableBytes], [data length]);
     
-    RTMP_SendPacket(_rtmp, &rtmpPkt, 0);
+    if (!RTMP_IsConnected(_rtmp)){
+        NSLog(@"rtmp is not connected!");
+    }
+    
+    if (!RTMP_SendPacket(_rtmp, &rtmpPkt, 0)){
+        NSLog(@"failed to send data");
+    }
     RTMPPacket_Free(&rtmpPkt);
 }
 

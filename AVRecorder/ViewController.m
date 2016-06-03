@@ -24,7 +24,7 @@
 
 - (void)setupRTMPSession
 {
-    if (NO == [[RTMPSession shareInstance] setupRTMPStream:@"rtmp://localhost/myapp/mystream"])
+    if (NO == [[RTMPSession shareInstance] setupRTMPStream:@"rtmp://192.168.64.219:19350/myapp/mystream"])
     {
         return;
     }
